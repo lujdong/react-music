@@ -3,18 +3,23 @@ import './recommend.styl'
 
 import Swiper from 'swiper'
 import 'swiper/dist/css/swiper.css'
+import LazyLoad,{forceCheck} from 'react-lazyload'
 
-import { getCarousel, getAlbums } from '@/api/recommend'
+import { getCarousel, getNewAlbum } from '@/api/recommend'
 import { CODE_SUCCESS } from '@/api/config'
 import * as AlbumModel from '@/model/album'
-import { getNewAlbum } from '../../api/recommend';
+
+import Scroll from "@/common/scroll/Scroll"
+import Loading from '@/common/loading/Loading'
 
 class Recommend extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            loading: true,
             sliderList: [],
-            newAlbums: []
+            newAlbums: [],
+            refreshScroll: false
         }
     }
 
@@ -45,7 +50,11 @@ class Recommend extends React.Component {
                     return new Date(b.public_time).getTime() - new Date(a.public_time).getTime();
                 })
                 this.setState({
-                    newAlbums: albumList
+                    newAlbums: albumList,
+                    loading: false
+                }, () => {
+                    //刷新scroll
+                    this.setState({ refreshScroll: true });
                 })
             }
         })
@@ -65,7 +74,9 @@ class Recommend extends React.Component {
             return (
                 <div className="album-wrapper" key={album.mId}>
                     <div className="left">
-                        <img src={album.img} width="100%" height="100%" alt={album.name} />
+                        <LazyLoad>
+                            <img src={album.img} width="100%" height="100%" alt={album.name} />
+                        </LazyLoad>
                     </div>
                     <div className="right">
                         <div className="album-name">
@@ -83,28 +94,33 @@ class Recommend extends React.Component {
         });
         return (
             <div className="music-recommend">
-                <div className="slider-container">
-                    <div className="swiper-wrapper">
-                        {
-                            this.state.sliderList.map(item => {
-                                return (
-                                    <div className="swiper-slide" key={item.id}>
-                                        <a href="" className="slider-nav" onClick={() => this.toLink(item.linkUrl)}>
-                                            <img src={item.picUrl} alt="" width="100%" height="100%" />
-                                        </a>
-                                    </div>
-                                )
-                            })
-                        }
+                <Scroll refresh={this.state.refreshScroll} onScroll={()=>forceCheck()}>
+                    <div>
+                        <div className="slider-container">
+                            <div className="swiper-wrapper">
+                                {
+                                    this.state.sliderList.map(item => {
+                                        return (
+                                            <div className="swiper-slide" key={item.id}>
+                                                <a href={item.linkUrl} className="slider-nav" onClick={() => this.toLink(item.linkUrl)}>
+                                                    <img src={item.picUrl} alt="" width="100%" height="100%" />
+                                                </a>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                            <div className="swiper-pagination"></div>
+                        </div>
+                        <div className="album-container">
+                            <h1 className="title">最新专辑</h1>
+                            <div className="album-list">
+                                {albums}
+                            </div>
+                        </div>
                     </div>
-                    <div className="swiper-pagination"></div>
-                </div>
-                <div className="album-container">
-                    <h1 className="title">最新专辑</h1>
-                    <div className="album-list">
-                        {albums}
-                    </div>
-                </div>
+                </Scroll>
+                <Loading title="正在加载..." show={this.state.loading} />
             </div>
         )
     }
