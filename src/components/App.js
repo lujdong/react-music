@@ -2,6 +2,8 @@ import React from 'react';
 import logo from '../assets/imgs/logo.png';
 import '../assets/stylus/reset.styl'
 import './App.styl'
+import "../assets/stylus/font.styl"
+
 
 import { BrowserRouter as Router, Route, Switch, Redirect, NavLink } from "react-router-dom"
 

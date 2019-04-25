@@ -12,9 +12,13 @@ import * as AlbumModel from '@/model/album'
 import Scroll from "@/common/scroll/Scroll"
 import Loading from '@/common/loading/Loading'
 
+import {Route} from "react-router-dom"
+import Album from "../album/Album"
+
 class Recommend extends React.Component {
     constructor(props) {
         super(props)
+        console.log(props)
         this.state = {
             loading: true,
             sliderList: [],
@@ -67,12 +71,21 @@ class Recommend extends React.Component {
         }
     }
 
+    toAlbumDetail(url){
+        return () => {
+        this.props.history.push({
+            pathname: url
+        });
+    }
+    }
+
     render() {
+        const {match} = this.props
         let albums = this.state.newAlbums.map(item => {
             //通过函数创建专辑对象
             let album = AlbumModel.createAlbumByList(item);
             return (
-                <div className="album-wrapper" key={album.mId}>
+                <div className="album-wrapper" key={album.mId} onClick={this.toAlbumDetail(`${match.url+"/"+album.mId}`)}>
                     <div className="left">
                         <LazyLoad>
                             <img src={album.img} width="100%" height="100%" alt={album.name} />
@@ -121,6 +134,7 @@ class Recommend extends React.Component {
                     </div>
                 </Scroll>
                 <Loading title="正在加载..." show={this.state.loading} />
+                <Route path={`${match.url + '/:id'}`} component={Album} />
             </div>
         )
     }

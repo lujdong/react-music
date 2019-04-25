@@ -40,3 +40,8 @@
     left: 0
     bottom: 52px
     width: 100%
+    .translate-enter
+      transform: translate3d(100%, 0, 0)
+      &.translate-enter-active
+        transition: transform .3s
+        transform: translate3d(0, 0, 0)
