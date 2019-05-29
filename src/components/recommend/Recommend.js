@@ -3,7 +3,7 @@ import './recommend.styl'
 
 import Swiper from 'swiper'
 import 'swiper/dist/css/swiper.css'
-import LazyLoad,{forceCheck} from 'react-lazyload'
+import LazyLoad, { forceCheck } from 'react-lazyload'
 
 import { getCarousel, getNewAlbum } from '@/api/recommend'
 import { CODE_SUCCESS } from '@/api/config'
@@ -12,8 +12,9 @@ import * as AlbumModel from '@/model/album'
 import Scroll from "@/common/scroll/Scroll"
 import Loading from '@/common/loading/Loading'
 
-import {Route} from "react-router-dom"
-import Album from "../album/Album"
+import { Route } from "react-router-dom"
+// import Album from "../album/Album"
+import Album from "@/containers/Album"
 
 class Recommend extends React.Component {
     constructor(props) {
@@ -71,21 +72,21 @@ class Recommend extends React.Component {
         }
     }
 
-    toAlbumDetail(url){
+    toAlbumDetail(url) {
         return () => {
-        this.props.history.push({
-            pathname: url
-        });
-    }
+            this.props.history.push({
+                pathname: url
+            });
+        }
     }
 
     render() {
-        const {match} = this.props
+        const { match } = this.props
         let albums = this.state.newAlbums.map(item => {
             //通过函数创建专辑对象
             let album = AlbumModel.createAlbumByList(item);
             return (
-                <div className="album-wrapper" key={album.mId} onClick={this.toAlbumDetail(`${match.url+"/"+album.mId}`)}>
+                <div className="album-wrapper" key={album.mId} onClick={this.toAlbumDetail(`${match.url + "/" + album.mId}`)}>
                     <div className="left">
                         <LazyLoad>
                             <img src={album.img} width="100%" height="100%" alt={album.name} />
@@ -107,7 +108,7 @@ class Recommend extends React.Component {
         });
         return (
             <div className="music-recommend">
-                <Scroll refresh={this.state.refreshScroll} onScroll={()=>forceCheck()}>
+                <Scroll refresh={this.state.refreshScroll} onScroll={() => forceCheck()}>
                     <div>
                         <div className="slider-container">
                             <div className="swiper-wrapper">
